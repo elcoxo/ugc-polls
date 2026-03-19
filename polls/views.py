@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
+from polls.helpers import get_next_question
 from polls.models import Poll, UserResponse, PollSession
 from polls.serializers import PollSerializer, QuestionSerializer, AnswerSerializer
 
@@ -42,20 +43,17 @@ class PollViewSet(ModelViewSet):
     def start(self, request, slug=None):
         """Создает сессию и возвращает первый вопрос"""
         poll = self.get_object()
+        session, created = PollSession.objects.get_or_create(user=request.user, poll=poll)
+        if session.is_finished:
+            return Response({'detail': 'Poll already completed.'}, status=HTTP_400_BAD_REQUEST)
 
-        first_question = poll.questions.first()
-        if first_question is None:
-            return Response(
-                {'detail': 'Poll has no questions.'},
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        session = PollSession.objects.create(user=request.user, poll=poll)
+        if not (question := get_next_question(session)):
+            return Response({'detail': 'Poll has no questions.'}, status=HTTP_400_BAD_REQUEST)
 
         return Response({
-            'session_id': session.id,
-            'question': QuestionSerializer(first_question).data,
-        }, status=status.HTTP_201_CREATED)
+            'session_slug': session.slug,
+            'question': QuestionSerializer(question).data,
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class PollSessionViewSet(GenericViewSet):
