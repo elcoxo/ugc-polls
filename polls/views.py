@@ -60,6 +60,7 @@ class PollViewSet(ModelViewSet):
 
 class PollSessionViewSet(GenericViewSet):
     permission_classes = [IsAuthenticated]
+    lookup_field = 'slug'
 
     def get_queryset(self):
         return PollSession.objects.filter(
@@ -80,7 +81,7 @@ class PollSessionViewSet(GenericViewSet):
         """Возвращает текущий вопрос"""
         session = self.get_object()
 
-        next_question = self._next_question(session)
+        next_question = get_next_question(session)
         if next_question is None:
             return Response({'completed': True})
 
@@ -99,14 +100,10 @@ class PollSessionViewSet(GenericViewSet):
 
         with transaction.atomic():
             UserResponse.objects.create(session=session, question=question, option=option)
-            next_question = self._next_question(session)
+            next_question = get_next_question(session)
             if next_question is None:
                 session.finished_at = timezone.now()
                 session.save(update_fields=['finished_at'])
                 return Response({'completed': True})
 
         return Response(QuestionSerializer(next_question).data)
-
-    def _next_question(self, session):
-        answered_ids = session.responses.values_list('question_id', flat=True)
-        return session.poll.questions.exclude(id__in=answered_ids).first()

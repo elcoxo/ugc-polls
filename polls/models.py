@@ -70,6 +70,7 @@ class PollSession(BaseModel):
         on_delete=models.CASCADE,
         related_name='sessions',
     )
+    slug = models.SlugField(max_length=32, db_index=True, unique=True, default=get_random_slug)
     finished_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
