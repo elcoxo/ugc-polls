@@ -17,6 +17,7 @@ class Poll(BaseModel):
     class Meta:
         verbose_name = 'Poll'
         verbose_name_plural = 'Polls'
+        ordering = ['created_at']
 
     def __str__(self):
         return f'Poll #{self.id}: {self.title}'
@@ -29,9 +30,7 @@ class Question(BaseModel):
         related_name='questions',
     )
     text = models.CharField('Question text', max_length=500)
-    is_multiple = models.BooleanField('Multiple choice', default=False)
-    ordering = models.PositiveIntegerField('Ordering', null=True, blank=True, default=0)
-
+    ordering = models.PositiveIntegerField('Ordering', default=0)
 
     class Meta:
         verbose_name = 'Question'
@@ -87,8 +86,8 @@ class PollSession(BaseModel):
 
 
 class UserResponse(BaseModel):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+    session = models.ForeignKey(
+        PollSession,
         on_delete=models.CASCADE,
         related_name='responses',
     )
@@ -105,7 +104,7 @@ class UserResponse(BaseModel):
     class Meta:
         verbose_name = 'User Response'
         verbose_name_plural = 'User Responses'
-        unique_together = ('user', 'question')
+        unique_together = ('session', 'question')
 
     def __str__(self):
-        return f'Response by User #{self.user_id} on Question #{self.question_id}'
+        return f'Response: Session #{self.session_id}, Question #{self.question_id}'
