@@ -60,6 +60,32 @@ class AnswerOption(BaseModel):
         return f'Option #{self.id}: {self.text}'
 
 
+class PollSession(BaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='sessions',
+    )
+    poll = models.ForeignKey(
+        Poll,
+        on_delete=models.CASCADE,
+        related_name='sessions',
+    )
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Poll Session'
+        verbose_name_plural = 'Poll Sessions'
+        unique_together = ('user', 'poll')
+
+    def __str__(self):
+        return f'Session by User #{self.user_id} on Poll #{self.poll_id}'
+
+    @property
+    def is_finished(self):
+        return self.finished_at is not None
+
+
 class UserResponse(BaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
