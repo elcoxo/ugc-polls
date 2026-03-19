@@ -68,14 +68,14 @@ class PollSessionViewSet(GenericViewSet):
     def get_object(self):
         session = get_object_or_404(
             self.get_queryset(),
-            pk=self.kwargs['pk'],
+            slug=self.kwargs['slug'],
             finished_at__isnull=True,
         )
         self.check_object_permissions(self.request, session)
         return session
 
     @action(detail=True, methods=['GET'])
-    def question(self, request, pk=None):
+    def question(self, request, slug=None):
         """Возвращает текущий вопрос"""
         session = self.get_object()
 
@@ -85,8 +85,9 @@ class PollSessionViewSet(GenericViewSet):
 
         return Response(QuestionSerializer(next_question).data)
 
+    @extend_schema(request=AnswerSerializer)
     @action(detail=True, methods=['POST'])
-    def answer(self, request, pk=None):
+    def answer(self, request, slug=None):
         """Сохраняет ответ на текущий вопрос"""
         session = self.get_object()
 

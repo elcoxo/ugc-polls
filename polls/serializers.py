@@ -41,4 +41,7 @@ class AnswerSerializer(serializers.Serializer):
         if option.question_id != question.id:
             raise serializers.ValidationError('Option does not belong to this question.')
 
+        if session.responses.filter(question=question).exists():
+            raise serializers.ValidationError('Question already answered.')
+
         return data
