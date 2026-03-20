@@ -5,6 +5,9 @@
 {% block content %}
     <h1 id="poll-title">Загрузка</h1>
 
+    <a href="/">← Назад</a>
+    <a id="stats-link" href="/polls/{{ request.resolver_match.kwargs.slug }}/stats/" style="display:none;">Статистика</a>
+
     <div id="start-section">
         <button id="start-btn">Начать опрос</button>
     </div>
@@ -138,6 +141,11 @@
                     document.getElementById('quiz-section').style.display = 'block';
                     document.getElementById('message').textContent = 'Вы уже прошли этот опрос.';
                 }
+                {% if user.is_authenticated %}
+                if (poll.user === '{{ user.username }}') {
+                    document.getElementById('stats-link').style.display = 'inline';
+                }
+                {% endif %}
             });
 
         document.getElementById('start-btn').onclick = () => {
