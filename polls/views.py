@@ -1,18 +1,20 @@
 from django.db import transaction
-from django.db.models import OuterRef, Exists
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS, BasePermission, AllowAny
+from rest_framework.permissions import (SAFE_METHODS, AllowAny, BasePermission,
+                                        IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from polls.helpers import get_next_question
-from polls.models import Poll, UserResponse, PollSession
-from polls.serializers import PollSerializer, QuestionSerializer, AnswerSerializer
+from polls.models import Poll, PollSession, UserResponse
+from polls.serializers import (AnswerSerializer, PollSerializer,
+                               QuestionSerializer)
 
 
 class IsAuthorOrReadOnly(BasePermission):

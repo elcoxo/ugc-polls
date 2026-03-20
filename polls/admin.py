@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from polls.models import Poll, Question, AnswerOption, UserResponse, PollSession
+from polls.models import (AnswerOption, Poll, PollSession, Question,
+                          UserResponse)
 
 
 class QuestionInline(admin.TabularInline):

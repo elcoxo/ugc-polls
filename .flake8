@@ -1,0 +1,29 @@
+[flake8]
+exclude = .git,__pycache__,.venv, .pytest_cache, .idea, __init__.py, migrations
+max-cognitive-complexity = 35
+max-line-length = 120
+
+ignore =
+    # Unnecessary dict call - rewrite as a literal.
+    C408
+    #  Avoid using null=True on string-based fields such CharField.
+    DJ01
+    # prefer-logging-interpolation: Use lazy % formatting in logging functions.
+    PIE781
+    PIE783
+    PIE786
+    PIE798
+    PIE799
+    PIE803
+    T101
+    W504
+    E203
+    E266
+    E501
+    W503
+
+
+[pep8]
+# https://pep8.readthedocs.io/en/latest/intro.html#error-codes
+# E501
+max-line-length = 120

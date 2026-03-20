@@ -1,12 +1,13 @@
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView, LoginView
-from django.urls import path, include
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import include, path
 from django.views.generic import TemplateView
+from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
+                                   SpectacularSwaggerView)
 from rest_framework.routers import DefaultRouter
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
-from polls.views import PollViewSet, PollSessionViewSet
-from users.views import register, poll_statistics
+from polls.views import PollSessionViewSet, PollViewSet
+from users.views import poll_statistics, register
 
 router = DefaultRouter()
 router.register('polls', PollViewSet, basename='polls')

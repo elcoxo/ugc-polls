@@ -2,10 +2,10 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Count
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from rest_framework.generics import get_object_or_404
 
-from polls.models import PollSession, Poll
+from polls.models import Poll, PollSession
 
 
 def register(request):
