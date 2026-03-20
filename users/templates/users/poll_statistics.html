@@ -1,0 +1,108 @@
+{% extends "polls/base.html" %}
+{% load static %}
+
+{% block title %}Статистика — {{ poll.title }}{% endblock %}
+
+{% block content %}
+    <script src="{% static 'js/highcharts.js' %}"></script>
+    <h1>{{ poll.title }}</h1>
+    <p><a href="/polls/{{ poll.slug }}/">← К опросу</a></p>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_sessions }}</div>
+            <div class="stat-label">Начали опрос</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ completed_sessions }}</div>
+            <div class="stat-label">Завершили опрос</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                {% if avg_completion_seconds %}
+                    {% if avg_completion_seconds >= 60 %}
+                        {{ avg_completion_seconds|floatformat:0 }}с
+                    {% else %}
+                        {{ avg_completion_seconds|floatformat:0 }}с
+                    {% endif %}
+                {% else %}
+                    —
+                {% endif %}
+            </div>
+            <div class="stat-label">Среднее время прохождения</div>
+        </div>
+    </div>
+
+    {% for question in questions %}
+        <div class="question-block">
+            <h3>{{ forloop.counter }}. {{ question.text }}</h3>
+            <p class="meta">Ответов: {{ question.total }}</p>
+            <div id="chart-{{ forloop.counter }}" class="chart"></div>
+            <script>
+                Highcharts.chart('chart-{{ forloop.counter }}', {
+                    chart: {type: 'column'},
+                    title: {text: null},
+                    xAxis: {
+                        categories: [{% for o in question.options %}'{{ o.text }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        title: {text: null}
+                    },
+                    yAxis: {title: {text: 'Ответов'}, allowDecimals: false},
+                    legend: {enabled: false},
+                    series: [{
+                        name: 'Ответов',
+                        data: [{% for o in question.options %}{{ o.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        color: '#1a73e8',
+                    }],
+                    credits: {enabled: false},
+                });
+            </script>
+        </div>
+    {% endfor %}
+
+    <style>
+        .stats-grid {
+            display: flex;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1a73e8;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 4px;
+        }
+
+        .question-block {
+            margin: 32px 0;
+        }
+
+        .question-block h3 {
+            margin-bottom: 4px;
+        }
+
+        .chart {
+            height: 200px;
+        }
+
+        .meta {
+            color: #888;
+            font-size: 0.9em;
+            margin: 4px 0 12px;
+        }
+    </style>
+
+{% endblock %}

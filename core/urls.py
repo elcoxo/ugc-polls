@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 from polls.views import PollViewSet, PollSessionViewSet
-from users.views import register
+from users.views import register, poll_statistics
 
 router = DefaultRouter()
 router.register('polls', PollViewSet, basename='polls')
@@ -22,5 +22,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     path('register/', register, name='register'),
     path('', TemplateView.as_view(template_name='polls/list.html'), name='poll-list'),
+    path('polls/<slug:slug>/stats/', poll_statistics, name='poll-stats'),
     path('polls/<slug:slug>/', TemplateView.as_view(template_name='polls/detail.html'), name='poll-detail'),
 ]
