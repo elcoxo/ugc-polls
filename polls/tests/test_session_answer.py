@@ -1,5 +1,3 @@
-import pytest
-
 from polls.models import AnswerOption, Poll, Question, UserResponse
 
 

@@ -1,10 +1,7 @@
-import pytest
 from django.utils import timezone
 
 from polls.models import Poll, PollSession
 
-
-# ─── List ─────────────────────────────────────────────────────────────────────
 
 def test_anonymous_can_list_polls(api_client, poll):
     r = api_client.get('/api/polls/')

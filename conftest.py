@@ -2,7 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
-from polls.models import AnswerOption, Poll, PollSession, Question, UserResponse
+from polls.models import AnswerOption, Poll, PollSession, Question
 
 User = get_user_model()
 
