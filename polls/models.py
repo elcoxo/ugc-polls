@@ -85,6 +85,12 @@ class PollSession(BaseModel):
     def is_finished(self):
         return self.finished_at is not None
 
+    @property
+    def duration(self):
+        if not self.finished_at:
+            return None
+        return self.finished_at - self.created_at
+
 
 class UserResponse(BaseModel):
     session = models.ForeignKey(
