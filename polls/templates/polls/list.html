@@ -1,0 +1,77 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Опросы{% endblock %}
+
+{% block content %}
+    <h1>Опросы</h1>
+    <div id="polls"></div>
+
+    <style>
+        .poll-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        h1 {
+            font-size: 80px;
+            font-weight: 700;
+        }
+
+        .poll-card h3 {
+            margin: 0 0 8px;
+        }
+
+        .poll-card a {
+            text-decoration: none;
+            color: #1a73e8;
+        }
+
+        .meta {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .badge-done {
+            background: #e6f4ea;
+            color: #2e7d32;
+        }
+
+        .badge-not-done {
+            background: #f1f3f4;
+            color: #888;
+        }
+    </style>
+
+    <script>
+        fetch('/api/polls/')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('polls');
+                if (!data.length) {
+                    container.innerHTML = '<p>Нет доступных опросов.</p>';
+                    return;
+                }
+                data.forEach(poll => {
+                    const badge = poll.is_finished === null ? '' :
+                        poll.is_finished
+                            ? '<span class="badge badge-done">Пройден</span>'
+                            : '<span class="badge badge-not-done">Не пройден</span>';
+                    container.innerHTML += `
+                        <div class="poll-card">
+                            <h3><a href="/polls/${poll.slug}/">${poll.title}</a> ${badge}</h3>
+                            <div class="meta">Автор: ${poll.user}</div>
+                        </div>
+                    `;
+                });
+            });
+    </script>
+{% endblock %}

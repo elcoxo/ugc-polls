@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Опросы{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            color: #ffffff;
+            padding: 10px 0;
+        }
+
+        .header-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a73e8;
+            border-radius: 9999px;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .header-text {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 20px;
+        }
+
+        .header-right a {
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+
+        .header-right a:hover {
+            opacity: 1;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            opacity: 0.85;
+            font-size: 20px;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <a href="/" class="header-text">temets*</a>
+        <div class="header-right">
+            {% if user.is_authenticated %}
+                <span>{{ user.username }}</span>
+                <form method="post" action="/logout/" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Выйти</button>
+                </form>
+            {% else %}
+                <a href="/login/">Войти</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+<main>
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

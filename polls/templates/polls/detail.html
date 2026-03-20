@@ -1,0 +1,162 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Опрос{% endblock %}
+
+{% block content %}
+    <h1 id="poll-title">Загрузка</h1>
+
+    <div id="start-section">
+        <button id="start-btn">Начать опрос</button>
+    </div>
+
+    <div id="quiz-section" style="display:none;">
+        <p id="question-text"></p>
+        <div id="options"></div>
+        <div id="message"></div>
+    </div>
+
+    <style>
+        .option {
+            display: block;
+            margin: 10px 0;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fff;
+            width: 100%;
+            text-align: left;
+            font-size: 1em;
+        }
+
+        .option:hover {
+            background: #f0f4ff;
+            border-color: #1a73e8;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #1a73e8;
+        }
+
+        #question-text {
+            margin-bottom: 20px;
+        }
+
+        #start-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        #start-btn:hover {
+            background: #1558b0;
+        }
+
+        .badge {
+            font-size: 0.5em;
+            padding: 2px 10px;
+            border-radius: 777px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        .badge-done {
+            background: #e6f4ea;
+            color: green;
+        }
+
+        .badge-not-done {
+            background: #f1f3f4;
+            color: grey;
+        }
+    </style>
+
+    <script>
+        const slug = window.location.pathname.split('/').filter(Boolean)[1];
+        let sessionSlug = null;
+
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : '';
+        }
+
+        function showQuestion(data) {
+            document.getElementById('start-section').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+
+            if (!data.question) {
+                document.getElementById('question-text').textContent = '';
+                document.getElementById('options').innerHTML = '';
+                document.getElementById('message').textContent = 'Опрос завершён! Спасибо за участие.';
+                return;
+            }
+
+            document.getElementById('message').textContent = '';
+            const q = data.question;
+            document.getElementById('question-text').textContent = q.text;
+
+            const container = document.getElementById('options');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = opt.text;
+                btn.onclick = () => sendAnswer(q.id, opt.id);
+                container.appendChild(btn);
+            });
+        }
+
+        function sendAnswer(questionId, optionId) {
+            fetch(`/api/sessions/${sessionSlug}/answer/`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+                body: JSON.stringify({question: questionId, option: optionId}),
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.completed) {
+                        showQuestion({});
+                    } else {
+                        showQuestion({question: data});
+                    }
+                });
+        }
+
+        fetch(`/api/polls/${slug}/`)
+            .then(r => r.json())
+            .then(poll => {
+                document.getElementById('poll-title').textContent = poll.title;
+                if (poll.is_finished === true) {
+                    document.getElementById('start-section').style.display = 'none';
+                    document.getElementById('quiz-section').style.display = 'block';
+                    document.getElementById('message').textContent = 'Вы уже прошли этот опрос.';
+                }
+            });
+
+        document.getElementById('start-btn').onclick = () => {
+            fetch(`/api/polls/${slug}/start/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': getCookie('csrftoken')},
+            })
+                .then(r => {
+                    if (r.status === 401 || r.status === 403) {
+                        window.location.href = '/login/?next=' + window.location.pathname;
+                        return;
+                    }
+                    return r.json();
+                })
+                .then(data => {
+                    if (!data) return;
+                    sessionSlug = data.session_slug;
+                    showQuestion(data);
+                });
+        };
+    </script>
+{% endblock %}
