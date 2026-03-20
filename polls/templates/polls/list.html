@@ -56,11 +56,12 @@
             .then(r => r.json())
             .then(data => {
                 const container = document.getElementById('polls');
-                if (!data.length) {
+                const polls = data.results;
+                if (!polls.length) {
                     container.innerHTML = '<p>Нет доступных опросов.</p>';
                     return;
                 }
-                data.forEach(poll => {
+                polls.forEach(poll => {
                     const badge = poll.is_finished === null ? '' :
                         poll.is_finished
                             ? '<span class="badge badge-done">Пройден</span>'

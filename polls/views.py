@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from common.paginations import BasePageNumberPagination
 from polls.helpers import get_next_question
 from polls.models import Poll, PollSession, UserResponse
 from polls.serializers import (AnswerSerializer, PollSerializer,
@@ -26,6 +27,7 @@ class IsAuthorOrReadOnly(BasePermission):
 
 class PollViewSet(ModelViewSet):
     serializer_class = PollSerializer
+    pagination_class = BasePageNumberPagination
     lookup_field = 'slug'
 
     def get_queryset(self):
