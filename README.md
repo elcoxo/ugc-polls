@@ -15,6 +15,8 @@
 * Swagger UI для интерактивной документации API;
 * Регистрация и аутентификация пользователей через сессии.
 
+<img width="1840" height="1140" alt="1" src="https://github.com/user-attachments/assets/9d1161da-5730-4d77-8836-2542598e6ddc" />
+
 ## Технологии
 
 - Django
@@ -74,6 +76,9 @@ docker compose -f docker-compose.yml up -d
    docker compose -f docker-compose.yml exec backend python manage.py createsuperuser
    ```
 
+<img width="2064" height="874" alt="5" src="https://github.com/user-attachments/assets/dd094721-67cd-40a0-8bcf-d6ee2b8415ff" />
+
+
 ### Доступ
 
 | Сервис         | URL                              |
@@ -131,6 +136,9 @@ docker compose -f docker-compose.yml up -d
 ## Эндпоинты
 
 Полная интерактивная документация доступна в Swagger: http://127.0.0.1:8000/api/docs/
+
+<img width="2064" height="1032" alt="CleanShot 2026-03-20 at 06 54 18@2x" src="https://github.com/user-attachments/assets/e8d93f41-3c0c-45a6-bdcd-bb37744ef9a6" />
+
 
 ### Аутентификация (через HTML формы)
 
@@ -211,6 +219,9 @@ docker compose -f docker-compose.yml up -d
 
 ### Прохождение опроса
 
+<img width="1840" height="758" alt="4" src="https://github.com/user-attachments/assets/8a742951-3988-429a-8659-4e06375d8250" />
+
+
 #### `GET /api/sessions/{slug}/question/` — текущий вопрос
 
 Возвращает следующий вопрос или `{"completed": true}` если опрос пройден.
@@ -249,6 +260,9 @@ docker compose -f docker-compose.yml up -d
 }
 ```
 
+<img width="1840" height="550" alt="3" src="https://github.com/user-attachments/assets/77363bd2-8b74-4406-8c4f-8ae1f2d66a10" />
+
+
 ### Статистика
 
 #### `GET /polls/{slug}/stats/` — страница статистики по опросу
@@ -258,6 +272,8 @@ docker compose -f docker-compose.yml up -d
 - количество начатых и завершённых прохождений
 - среднее время прохождения
 - распределение ответов по каждому вопросу
+
+<img width="1840" height="1204" alt="2" src="https://github.com/user-attachments/assets/90877278-97e2-4391-9dc8-73c4e8ec448a" />
 
 ## Линтеры
 
