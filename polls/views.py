@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import OuterRef, Exists
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -27,8 +28,22 @@ class PollViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.action in ('list', 'retrieve', 'start'):
-            return Poll.objects.all()
-        return Poll.objects.filter(user=self.request.user)
+            queryset = Poll.objects.all()
+        else:
+            queryset = Poll.objects.filter(user=self.request.user)
+
+        if self.request.user.is_authenticated:
+            queryset = queryset.annotate(
+                is_finished=Exists(
+                    PollSession.objects.filter(
+                        poll=OuterRef('pk'),
+                        user=self.request.user,
+                        finished_at__isnull=False,
+                    )
+                )
+            )
+
+        return queryset
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):

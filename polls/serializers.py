@@ -5,11 +5,18 @@ from polls.models import Poll, Question, AnswerOption
 
 class PollSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
+    is_finished = serializers.SerializerMethodField()
 
     class Meta:
         model = Poll
-        fields = ['id', 'slug', 'title', 'user', 'created_at', 'updated_at']
+        fields = ['id', 'slug', 'title', 'user', 'is_finished', 'created_at', 'updated_at']
         read_only_fields = ['id', 'slug', 'user', 'created_at', 'updated_at']
+
+    def get_is_finished(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return None
+        return getattr(obj, 'is_finished', None)
 
 
 class AnswerOptionSerializer(serializers.ModelSerializer):
